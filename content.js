@@ -9,18 +9,26 @@
   const highlightedDays = new Map();
   let listenersInstalled = false;
 
+  const TURBOLINKS_EVENTS = ['turbolinks:load', 'turbolinks:render', 'page:load', 'page:change'];
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
-  document.addEventListener('turbolinks:load', () => init());
+  TURBOLINKS_EVENTS.forEach(evt => {
+    document.addEventListener(evt, () => init());
+  });
 
   function init() {
     if (!document.querySelector('.table-head')) {
-      scheduleRetry();
+      waitForTable();
       return;
     }
+    if (!init.completedOnce) {
+      init.completedOnce = true;
+    }
+    scheduleRetry.attempts = 0;
     evaluateAllDays();
     installListeners();
   }
@@ -261,13 +269,32 @@
   }
 
   function scheduleRetry() {
-    if (scheduleRetry.attempts && scheduleRetry.attempts > 5) {
+    if (scheduleRetry.attempts && scheduleRetry.attempts > 10) {
       return;
     }
     scheduleRetry.attempts = (scheduleRetry.attempts || 0) + 1;
     setTimeout(() => {
       init();
-    }, 500);
+    }, 200);
+  }
+
+  function waitForTable() {
+    if (waitForTable.observer) {
+      return;
+    }
+    scheduleRetry();
+    const observer = new MutationObserver(() => {
+      if (document.querySelector('.table-head')) {
+        observer.disconnect();
+        waitForTable.observer = null;
+        init();
+      }
+    });
+    observer.observe(document.body || document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+    waitForTable.observer = observer;
   }
 
   function isRestDay(dayNumber) {
