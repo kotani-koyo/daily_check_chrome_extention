@@ -6,8 +6,8 @@
   "content_scripts": [
     {
       "matches": [
-        "https://153.126.200.158:3000/members/*/daily*",
-        "https://153.126.200.158:3000/members/*/accept*"
+        "https://daily-report.e4dev.info/members/*/daily*",
+        "https://daily-report.e4dev.info/members/*/accept*"
       ],
       "js": ["content.js"],
       "css": ["styles.css"],

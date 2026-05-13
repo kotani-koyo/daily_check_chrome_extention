@@ -1,6 +1,6 @@
 # Daily Check Chrome Extension
 
-社内日報ページ `https://153.126.200.158:3000/members/*/daily` を対象に、以下の異常を自動でハイライトする Chrome 拡張機能です。
+社内日報ページ `https://daily-report.e4dev.info/members/*/daily` を対象に、以下の異常を自動でハイライトする Chrome 拡張機能です。
 
 - 当日の合計時間が 8 時間に満たない
 - 本日までの列で一切入力が無い（未入力）
